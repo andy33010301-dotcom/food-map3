@@ -1,0 +1,380 @@
+<h1>👋 Hello World!</h1><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>附近美食1.0</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            background: #eee;
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Sections */
+        .section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--primary-color);
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        /* Grid Layouts */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .food-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            min-height: 100px;
+        }
+
+        /* Option Buttons */
+        .option-btn {
+            padding: 12px;
+            border: 1px solid #eee;
+            background: #fff;
+            border-radius: 10px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .option-btn:active, .option-btn.selected {
+            border-color: var(--primary-color);
+            background: #fff5f5;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tag-btn {
+            padding: 8px 16px;
+            border: 1px solid #eee;
+            background: #fff;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .tag-btn:active, .tag-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-main {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-search {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-random {
+            background: #ffd43b;
+            color: #333;
+        }
+
+        .warning-text {
+            font-size: 0.8rem;
+            color: #e03131;
+            background: #fff5f5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Stats */
+        .stats {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📍 附近美食1.0</h1>
+    <div class="subtitle">Google Map 智慧快搜</div>
+
+    <div class="category-tabs">
+        <button class="tab-btn active" onclick="setCategory('meal')">🍱 找正餐</button>
+        <button class="tab-btn" onclick="setCategory('tea')">🧋 下午茶</button>
+        <button class="tab-btn" onclick="setCategory('special')">✨ 特殊</button>
+    </div>
+
+    <div class="section-title">1. 用餐情境</div>
+    <div class="options-grid" id="scenario-container">
+        <button class="option-btn" onclick="selectScenario(this, '隨便吃吃')">🍴 隨便吃吃</button>
+        <button class="option-btn" onclick="selectScenario(this, '1人獨享')">👤 1人獨享</button>
+        <button class="option-btn" onclick="selectScenario(this, '2人約會')">👥 2人約會</button>
+        <button class="option-btn" onclick="selectScenario(this, '多人聚餐')">👨‍👩‍👧‍👦 多人聚餐</button>
+    </div>
+
+    <div class="section-title">2. 想吃什麼？</div>
+    <div class="food-grid" id="food-container">
+        </div>
+
+    <div id="special-warning" class="warning-text">
+        ⚠️ 本區「特殊」類別搜尋後，請自行確認符合需求再前往消費喔。
+    </div>
+
+    <div class="actions">
+        <button class="btn-main btn-search" onclick="doSearch()">
+            🔍 搜尋
+        </button>
+        <button class="btn-main btn-random" onclick="doRandom()">
+            🎲 幫選
+        </button>
+    </div>
+
+    <div class="stats">
+        已有 <span id="counter">12,580</span> 人使用此工具
+    </div>
+</div>
+
+<script>
+    // 資料定義
+    const data = {
+        meal: [
+            "便當", "拉麵", "火鍋", "燒肉", "牛排", 
+            "壽司", "義大利麵", "泰式料理", "韓式料理", "美式漢堡", 
+            "咖哩", "滷味", "素食", "自助餐", "熱炒", 
+            "鴨肉飯", "牛肉麵", "水餃"
+        ],
+        tea: [
+            "咖啡廳", "手搖飲", "蛋糕", "甜甜圈", "鬆餅", 
+            "豆花", "冰品", "雞蛋糕", "舒芙蕾", "肉桂捲"
+        ],
+        special: [
+            "酒吧", "居酒屋", "餐酒館", "宵夜", "景觀餐廳", 
+            "親子餐廳", "寵物友善", "米其林"
+        ]
+    };
+
+    let currentCategory = 'meal';
+    let selectedScenario = '';
+    let selectedFood = '';
+
+    // 初始化
+    window.onload = () => {
+        renderFoodOptions();
+        // 隨機增加一點人數讓它看起來是活的
+        document.getElementById('counter').innerText = (12000 + Math.floor(Math.random() * 1000)).toLocaleString();
+    };
+
+    // 切換大類別
+    function setCategory(cat) {
+        currentCategory = cat;
+        
+        // 更新 Tab 樣式
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // 顯示或隱藏警告
+        const warning = document.getElementById('special-warning');
+        if (cat === 'special') {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
+
+        // 重置選擇並重新渲染食物
+        selectedFood = '';
+        renderFoodOptions();
+    }
+
+    // 渲染食物標籤
+    function renderFoodOptions() {
+        const container = document.getElementById('food-container');
+        container.innerHTML = '';
+        
+        data[currentCategory].forEach(food => {
+            const btn = document.createElement('button');
+            btn.className = 'tag-btn';
+            btn.innerText = food;
+            btn.onclick = () => selectFood(btn, food);
+            container.appendChild(btn);
+        });
+    }
+
+    // 選擇情境
+    function selectScenario(el, val) {
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+        if (selectedScenario === val) {
+            selectedScenario = ''; // 取消選擇
+        } else {
+            el.classList.add('selected');
+            selectedScenario = val;
+        }
+    }
+
+    // 選擇食物
+    function selectFood(el, val) {
+        document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('selected'));
+        if (selectedFood === val) {
+            selectedFood = ''; // 取消選擇
+        } else {
+            el.classList.add('selected');
+            selectedFood = val;
+        }
+    }
+
+    // 執行搜尋
+    function doSearch() {
+        let queryParts = [];
+        
+        // 如果有選情境，加入情境關鍵字 (除了"隨便吃吃"這種無意義的詞)
+        if (selectedScenario && selectedScenario !== '隨便吃吃') {
+            queryParts.push(selectedScenario);
+        }
+
+        // 如果有選食物，加入食物關鍵字
+        if (selectedFood) {
+            queryParts.push(selectedFood);
+        } else {
+            // 沒選食物時，給一個預設大方向
+            if(currentCategory === 'meal') queryParts.push('美食');
+            if(currentCategory === 'tea') queryParts.push('下午茶');
+            if(currentCategory === 'special') queryParts.push('熱門餐廳');
+        }
+
+        // 組合搜尋字串
+        const query = queryParts.join(' ');
+        const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+        
+        window.open(url, '_blank');
+    }
+
+    // 幫我選 (隨機)
+    function doRandom() {
+        // 隨機選一個食物
+        const foods = data[currentCategory];
+        const randomFood = foods[Math.floor(Math.random() * foods.length)];
+        
+        // 視覺上選中它
+        renderFoodOptions(); // 重置介面
+        const buttons = document.querySelectorAll('.tag-btn');
+        for (let btn of buttons) {
+            if (btn.innerText === randomFood) {
+                btn.classList.add('selected');
+                selectedFood = randomFood;
+                break;
+            }
+        }
+
+        // 延遲一下然後搜尋，製造儀式感
+        setTimeout(() => {
+            doSearch();
+        }, 500);
+    }
+</script>
+
+</body>
+</html>
